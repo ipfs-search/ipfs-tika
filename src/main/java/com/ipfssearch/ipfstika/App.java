@@ -1,9 +1,13 @@
 package com.ipfssearch.ipfstika;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
+
+import org.ipfs.api.IPFS;
+import org.ipfs.api.Multihash;
 
 public class App extends NanoHTTPD {
 
@@ -23,9 +27,18 @@ public class App extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
+        IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
+
         String uri = session.getUri();
         String hash = uri.substring(1);
+        Multihash filePointer = Multihash.fromBase58(hash);
 
-        return newFixedLengthResponse(hash);
+        try {
+            InputStream inputStream = ipfs.catStream(filePointer);
+        } catch (IOException e) {
+            return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, e.getMessage());
+        }
+
+        return newFixedLengthResponse("bla");
     }
 }
