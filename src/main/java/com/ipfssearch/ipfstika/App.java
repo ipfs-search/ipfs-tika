@@ -13,6 +13,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.LinkContentHandler;
+import org.apache.tika.language.detect.LanguageHandler;
 import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
@@ -60,7 +61,8 @@ public class App extends NanoHTTPD {
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
         BodyContentHandler body_handler = new BodyContentHandler();
-        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
+        LanguageHandler language_handler = new LanguageHandler();
+        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler, language_handler);
         Metadata metadata = new Metadata();
 
 
