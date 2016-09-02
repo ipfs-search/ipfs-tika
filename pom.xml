@@ -24,10 +24,5 @@
       <artifactId>tika-parsers</artifactId>
       <version>1.13</version>
     </dependency>
-    <dependency>
-      <groupId>com.github.ipfs</groupId>
-      <artifactId>java-ipfs-api</artifactId>
-      <version>v0.4.2</version>
-    </dependency>
   </dependencies>
 </project>

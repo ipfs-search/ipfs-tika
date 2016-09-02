@@ -2,12 +2,13 @@ package com.ipfssearch.ipfstika;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.net.URL;
+import java.net.URLConnection;
+
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
-
-import org.ipfs.api.IPFS;
-import org.ipfs.api.Multihash;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -48,15 +49,12 @@ public class App extends NanoHTTPD {
     }
 
     private String getResponse(String uri) throws IOException {
-        IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
+        String url = "http://localhost:8080" + uri;
 
-        String hash = uri.substring(1);
-        Multihash filePointer = Multihash.fromBase58(hash);
+        URLConnection connection = new URL(url).openConnection();
+        InputStream inputStream = connection.getInputStream();
 
-        InputStream inputStream;
         String output;
-
-        inputStream = ipfs.catStream(filePointer);
 
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
@@ -65,10 +63,8 @@ public class App extends NanoHTTPD {
         TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler, language_handler);
         Metadata metadata = new Metadata();
 
-
         try {
             parser.parse(inputStream, handler, metadata);
-            output = metadata.toString();
         } catch (TikaException e) {
             throw new IOException(e);
         } catch (SAXException e) {
@@ -76,6 +72,16 @@ public class App extends NanoHTTPD {
         } finally {
             inputStream.close();
         }
+
+        /* Now return JSON with:
+            {
+                "language": language_handler.getLanguage(),
+                "content": body_handler.toString(),
+                "links": link_handler.getLinks()
+            }
+        */
+
+        output = body_handler.toString();
 
         return output;
     }
