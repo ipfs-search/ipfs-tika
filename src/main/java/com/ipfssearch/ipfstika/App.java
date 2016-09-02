@@ -9,6 +9,9 @@ import fi.iki.elonen.NanoHTTPD;
 import org.ipfs.api.IPFS;
 import org.ipfs.api.Multihash;
 
+import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
+
 public class App extends NanoHTTPD {
 
     public App() throws IOException {
@@ -27,18 +30,36 @@ public class App extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
+        String uri = session.getUri();
+
+        try {
+            return newFixedLengthResponse(getResponse(uri));
+        } catch (IOException ioe) {
+            return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, ioe.getMessage());
+        }
+    }
+
+    private String getResponse(String uri) throws IOException {
         IPFS ipfs = new IPFS("/ip4/127.0.0.1/tcp/5001");
 
-        String uri = session.getUri();
         String hash = uri.substring(1);
         Multihash filePointer = Multihash.fromBase58(hash);
 
+        InputStream inputStream;
+        String output;
+
+        inputStream = ipfs.catStream(filePointer);
+
+        Tika tika = new Tika();
+
         try {
-            InputStream inputStream = ipfs.catStream(filePointer);
-        } catch (IOException e) {
-            return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, e.getMessage());
+            output = tika.parseToString(inputStream);
+        } catch (TikaException e) {
+            throw new IOException(e);
+        } finally {
+            inputStream.close();
         }
 
-        return newFixedLengthResponse("bla");
+        return output;
     }
 }
