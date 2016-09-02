@@ -19,6 +19,9 @@ import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import org.xml.sax.SAXException;
 
 public class App extends NanoHTTPD {
@@ -67,7 +70,7 @@ public class App extends NanoHTTPD {
         System.out.println("Parsing: " + url);
 
         try {
-            parser.parse(inputStream, body_handler, metadata);
+            parser.parse(inputStream, handler, metadata);
         } catch (TikaException e) {
             System.err.println("Tika exception:\n" + e.getMessage());
             throw new IOException(e);
@@ -82,12 +85,15 @@ public class App extends NanoHTTPD {
             {
                 "language": language_handler.getLanguage(),
                 "content": body_handler.toString(),
-                "links": link_handler.getLinks()
+                "links": link_handler.getLinks(),
+                "metadata": metadata
             }
         */
+        Gson gson = new Gson();
+        JsonObject output_json = gson.toJsonTree(metadata).getAsJsonObject();
+        output_json.add("content", gson.toJsonTree(body_handler.toString()));
+        output_json.add("links", gson.toJsonTree(link_handler.getLinks()));
 
-        String output = body_handler.toString();
-
-        return output;
+        return output_json.toString();
     }
 }
