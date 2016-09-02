@@ -59,15 +59,20 @@ public class App extends NanoHTTPD {
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
         BodyContentHandler body_handler = new BodyContentHandler();
-        LanguageHandler language_handler = new LanguageHandler();
-        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler, language_handler);
+        // This causes weird crashes
+        // LanguageHandler language_handler = new LanguageHandler();
+        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
         Metadata metadata = new Metadata();
 
+        System.out.println("Parsing: " + url);
+
         try {
-            parser.parse(inputStream, handler, metadata);
+            parser.parse(inputStream, body_handler, metadata);
         } catch (TikaException e) {
+            System.err.println("Tika exception:\n" + e.getMessage());
             throw new IOException(e);
         } catch (SAXException e) {
+            System.err.println("SAX exception:\n" + e.getMessage());
             throw new IOException(e);
         } finally {
             inputStream.close();
@@ -81,7 +86,7 @@ public class App extends NanoHTTPD {
             }
         */
 
-        String output = link_handler.toString();
+        String output = body_handler.toString();
 
         return output;
     }
