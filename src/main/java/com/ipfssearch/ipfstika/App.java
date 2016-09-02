@@ -12,7 +12,11 @@ import org.ipfs.api.Multihash;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.sax.LinkContentHandler;
+import org.apache.tika.sax.TeeContentHandler;
+import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
+
 import org.xml.sax.SAXException;
 
 public class App extends NanoHTTPD {
@@ -54,12 +58,15 @@ public class App extends NanoHTTPD {
         inputStream = ipfs.catStream(filePointer);
 
         AutoDetectParser parser = new AutoDetectParser();
-        BodyContentHandler handler = new BodyContentHandler();
+        LinkContentHandler link_handler = new LinkContentHandler();
+        BodyContentHandler body_handler = new BodyContentHandler();
+        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
         Metadata metadata = new Metadata();
+
 
         try {
             parser.parse(inputStream, handler, metadata);
-            output = handler.toString();
+            output = metadata.toString();
         } catch (TikaException e) {
             throw new IOException(e);
         } catch (SAXException e) {
