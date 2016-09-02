@@ -9,8 +9,11 @@ import fi.iki.elonen.NanoHTTPD;
 import org.ipfs.api.IPFS;
 import org.ipfs.api.Multihash;
 
-import org.apache.tika.Tika;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.exception.TikaException;
+import org.xml.sax.SAXException;
 
 public class App extends NanoHTTPD {
 
@@ -50,11 +53,16 @@ public class App extends NanoHTTPD {
 
         inputStream = ipfs.catStream(filePointer);
 
-        Tika tika = new Tika();
+        AutoDetectParser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        Metadata metadata = new Metadata();
 
         try {
-            output = tika.parseToString(inputStream);
+            parser.parse(inputStream, handler, metadata);
+            output = handler.toString();
         } catch (TikaException e) {
+            throw new IOException(e);
+        } catch (SAXException e) {
             throw new IOException(e);
         } finally {
             inputStream.close();
