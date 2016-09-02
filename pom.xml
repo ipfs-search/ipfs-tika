@@ -4,7 +4,7 @@
   <groupId>com.ipfssearch.ipfstika</groupId>
   <artifactId>ipfs-tika</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <name>ipfs-tika</name>
   <url>http://maven.apache.org</url>
   <dependencies>
