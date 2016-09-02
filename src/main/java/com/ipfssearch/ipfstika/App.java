@@ -42,8 +42,10 @@ public class App extends NanoHTTPD {
         String uri = session.getUri();
 
         try {
+            System.out.println(uri);
             return newFixedLengthResponse(getResponse(uri));
         } catch (IOException ioe) {
+            System.err.println("Internal server error:\n" + ioe.getMessage());
             return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, ioe.getMessage());
         }
     }
@@ -53,8 +55,6 @@ public class App extends NanoHTTPD {
 
         URLConnection connection = new URL(url).openConnection();
         InputStream inputStream = connection.getInputStream();
-
-        String output;
 
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
@@ -81,7 +81,7 @@ public class App extends NanoHTTPD {
             }
         */
 
-        output = body_handler.toString();
+        String output = link_handler.toString();
 
         return output;
     }
