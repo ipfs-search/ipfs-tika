@@ -5,10 +5,15 @@ import java.io.InputStream;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.MalformedURLException;
 
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import fi.iki.elonen.NanoHTTPD;
+
+import org.apache.commons.lang.StringUtils;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -53,6 +58,41 @@ public class App extends NanoHTTPD {
         }
     }
 
+    private List<String> getAbsoluteLinks(String parentURL, List<Link> links) {
+        List<String> links_out = new ArrayList<String>();
+        String uri;
+
+        URL url_;
+        try {
+            url_ = new URL(parentURL);
+        } catch (MalformedURLException e) {
+            System.err.println("MalformedURLException:\n" + e.getMessage());
+            return links_out;
+        }
+
+        for (Link link : links) {
+            uri = link.getUri();
+
+            if (StringUtils.isBlank(uri)) {
+                continue;
+            }
+            String abs_uri;
+
+            // build an absolute URL
+            try {
+                URL tmpURL = new URL(url_, uri);
+                abs_uri = tmpURL.toExternalForm();
+            } catch (MalformedURLException e) {
+                System.err.println("MalformedURLException:\n" + e.getMessage());
+                continue;
+            }
+
+            links_out.add(abs_uri.toString());
+        }
+
+        return links_out;
+    }
+
     private String getResponse(String uri) throws IOException {
         String url = "http://localhost:8080" + uri;
 
@@ -81,18 +121,20 @@ public class App extends NanoHTTPD {
             inputStream.close();
         }
 
+        List<String> links = getAbsoluteLinks(url, link_handler.getLinks());
+
         /* Now return JSON with:
             {
                 "language": language_handler.getLanguage(),
                 "content": body_handler.toString(),
-                "links": link_handler.getLinks(),
+                "links": links,
                 "metadata": metadata
             }
         */
         Gson gson = new Gson();
         JsonObject output_json = gson.toJsonTree(metadata).getAsJsonObject();
         output_json.add("content", gson.toJsonTree(body_handler.toString()));
-        output_json.add("links", gson.toJsonTree(link_handler.getLinks()));
+        output_json.add("links", gson.toJsonTree(links));
 
         return output_json.toString();
     }
