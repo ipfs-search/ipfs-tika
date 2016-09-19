@@ -101,7 +101,7 @@ public class App extends NanoHTTPD {
 
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
-        BodyContentHandler body_handler = new BodyContentHandler();
+        BodyContentHandler body_handler = new BodyContentHandler(10*1024*1024);
         // This causes weird crashes
         // LanguageHandler language_handler = new LanguageHandler();
         TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
