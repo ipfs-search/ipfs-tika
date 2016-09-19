@@ -86,7 +86,8 @@ public class App extends NanoHTTPD {
         return links_out;
     }
 
-    private String getResponse(String uri_string) throws IOException {
+    private String getResponse(String path) throws IOException {
+        // Generate properly escaped URL
         URI uri;
 
         try {
@@ -95,7 +96,7 @@ public class App extends NanoHTTPD {
                 null,
                 "localhost",
                 8080,
-                uri_string,
+                path,
                 null,
                 null
             );
@@ -105,6 +106,7 @@ public class App extends NanoHTTPD {
             throw new IOException(e);
         }
 
+        // Turn URL into input stream
         URL url = uri.toURL();
         URLConnection connection = url.openConnection();
         InputStream inputStream = connection.getInputStream();
@@ -117,7 +119,11 @@ public class App extends NanoHTTPD {
         TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
         Metadata metadata = new Metadata();
 
-        System.out.println("Parsing: " + uri.toString());
+        // Set filename from path string
+        String filename = path.substring(path.lastIndexOf("/")+1, path.length());
+        metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
+
+        System.out.println("Parsing: " + uri.toString() + " ("+filename+")");
 
         try {
             parser.parse(inputStream, handler, metadata);
