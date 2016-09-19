@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.net.URL;
+import java.net.URI;
 import java.net.URLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 import java.util.Map;
 import java.util.List;
@@ -52,22 +54,14 @@ public class App extends NanoHTTPD {
         try {
             return newFixedLengthResponse(getResponse(uri));
         } catch (IOException ioe) {
-            System.err.println("Internal server error:\n" + ioe.getMessage());
+            System.err.println("Internal server error:\n" + ioe.toString());
             return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, NanoHTTPD.MIME_PLAINTEXT, ioe.getMessage());
         }
     }
 
-    private List<String> getAbsoluteLinks(String parentURL, List<Link> links) {
+    private List<String> getAbsoluteLinks(URL parent_url, List<Link> links) {
         List<String> links_out = new ArrayList<String>();
         String uri;
-
-        URL url_;
-        try {
-            url_ = new URL(parentURL);
-        } catch (MalformedURLException e) {
-            System.err.println("MalformedURLException:\n" + e.getMessage());
-            return links_out;
-        }
 
         for (Link link : links) {
             uri = link.getUri();
@@ -79,7 +73,7 @@ public class App extends NanoHTTPD {
 
             // build an absolute URL
             try {
-                URL tmpURL = new URL(url_, uri);
+                URL tmpURL = new URL(parent_url, uri);
                 abs_uri = tmpURL.toExternalForm();
             } catch (MalformedURLException e) {
                 System.err.println("MalformedURLException:\n" + e.getMessage());
@@ -92,10 +86,27 @@ public class App extends NanoHTTPD {
         return links_out;
     }
 
-    private String getResponse(String uri) throws IOException {
-        String url = "http://localhost:8080" + uri;
+    private String getResponse(String uri_string) throws IOException {
+        URI uri;
 
-        URLConnection connection = new URL(url).openConnection();
+        try {
+            uri = new URI(
+                "http",
+                null,
+                "localhost",
+                8080,
+                uri_string,
+                null,
+                null
+            );
+
+        } catch (URISyntaxException e) {
+            System.err.println("URI syntax exception:\n" + e.getMessage());
+            throw new IOException(e);
+        }
+
+        URL url = uri.toURL();
+        URLConnection connection = url.openConnection();
         InputStream inputStream = connection.getInputStream();
 
         AutoDetectParser parser = new AutoDetectParser();
@@ -106,7 +117,7 @@ public class App extends NanoHTTPD {
         TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
         Metadata metadata = new Metadata();
 
-        System.out.println("Parsing: " + url);
+        System.out.println("Parsing: " + uri.toString());
 
         try {
             parser.parse(inputStream, handler, metadata);
