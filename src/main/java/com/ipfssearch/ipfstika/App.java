@@ -150,7 +150,7 @@ public class App extends NanoHTTPD {
         Gson gson = new Gson();
         JsonObject output_json = gson.toJsonTree(metadata).getAsJsonObject();
         output_json.add("content", gson.toJsonTree(body_handler.toString().trim()));
-        output_json.add("links", gson.toJsonTree(links));
+        output_json.add("urls", gson.toJsonTree(links));
 
         return output_json.toString();
     }
