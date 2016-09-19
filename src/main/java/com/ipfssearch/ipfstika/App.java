@@ -50,7 +50,6 @@ public class App extends NanoHTTPD {
         String uri = session.getUri();
 
         try {
-            System.out.println(uri);
             return newFixedLengthResponse(getResponse(uri));
         } catch (IOException ioe) {
             System.err.println("Internal server error:\n" + ioe.getMessage());
