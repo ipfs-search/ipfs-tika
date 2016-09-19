@@ -34,7 +34,7 @@ public class App extends NanoHTTPD {
     public App() throws IOException {
         super(8081);
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-        System.out.println("\nRunning! Point your browsers to http://localhost:8081/ \n");
+        System.out.println("\nipfs-tika accepting requests at: http://localhost:8081/ \n");
     }
 
     public static void main(String[] args) {
