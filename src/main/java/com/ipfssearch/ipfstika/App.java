@@ -34,7 +34,7 @@ import org.xml.sax.SAXException;
 public class App extends NanoHTTPD {
 
     public App() throws IOException {
-        super(8081);
+        super("localhost", 8081);
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         System.out.println("\nipfs-tika accepting requests at: http://localhost:8081/ \n");
     }
