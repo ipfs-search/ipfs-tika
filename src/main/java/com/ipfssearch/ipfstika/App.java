@@ -106,6 +106,8 @@ public class App extends NanoHTTPD {
             throw new IOException(e);
         }
 
+        System.out.println("Fetching: " + uri.toString());
+
         // Turn URL into input stream
         URL url = uri.toURL();
         URLConnection connection = url.openConnection();
