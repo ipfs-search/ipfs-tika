@@ -1,11 +1,9 @@
 package com.ipfssearch.ipfstika;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import java.net.URL;
 import java.net.URI;
-import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
@@ -25,6 +23,7 @@ import org.apache.tika.language.detect.LanguageHandler;
 import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -110,8 +109,7 @@ public class App extends NanoHTTPD {
 
         // Turn URL into input stream
         URL url = uri.toURL();
-        URLConnection connection = url.openConnection();
-        InputStream inputStream = connection.getInputStream();
+        TikaInputStream inputStream = TikaInputStream.get(url);
 
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
