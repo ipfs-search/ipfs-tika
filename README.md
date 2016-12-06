@@ -6,3 +6,6 @@ Java web application taking IPFS hashes, extracting (textual) content and metada
 
 ## Running
 `mvn exec:java -Dexec.mainClass="com.ipfssearch.ipfstika.App"`
+
+## Packaging
+`mvn package`
