@@ -68,5 +68,12 @@
       <version>2.7</version>
       <scope>compile</scope>
     </dependency>
+    <!-- slf4j-simple: logging for tika errors -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>1.7.25</version>
+        <scope>compile</scope>
+    </dependency>
   </dependencies>
 </project>
