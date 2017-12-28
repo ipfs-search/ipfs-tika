@@ -3,7 +3,7 @@
   <groupId>com.ipfssearch.ipfstika</groupId>
   <artifactId>ipfs-tika</artifactId>
   <packaging>jar</packaging>
-  <version>0.2</version>
+  <version>0.3</version>
   <name>ipfs-tika</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
-      <version>1.14</version>
+      <version>1.17</version>
     </dependency>
     <!--  Gson: Java to Json conversion -->
     <dependency>
