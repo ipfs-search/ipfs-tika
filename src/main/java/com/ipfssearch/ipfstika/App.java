@@ -20,8 +20,6 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.tika.sax.LinkContentHandler;
 import org.apache.tika.language.detect.LanguageHandler;
-import org.apache.tika.language.detect.LanguageDetector;
-import org.apache.tika.langdetect.OptimaizeLangDetector;
 import org.apache.tika.sax.TeeContentHandler;
 import org.apache.tika.sax.Link;
 import org.apache.tika.exception.TikaException;
@@ -116,11 +114,9 @@ public class App extends NanoHTTPD {
         AutoDetectParser parser = new AutoDetectParser();
         LinkContentHandler link_handler = new LinkContentHandler();
         BodyContentHandler body_handler = new BodyContentHandler(10*1024*1024);
-
-        LanguageDetector language_detector = new OptimaizeLangDetector().loadModels();
-        LanguageHandler language_handler = new LanguageHandler(language_detector);
-
-        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler, language_handler);
+        // This causes weird crashes
+        // LanguageHandler language_handler = new LanguageHandler();
+        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
         Metadata metadata = new Metadata();
 
         // Set filename from path string
@@ -145,17 +141,16 @@ public class App extends NanoHTTPD {
 
         /* Now return JSON with:
             {
-                "metadata": metadata,
                 "language": language_handler.getLanguage(),
                 "content": body_handler.toString(),
-                "urls": links,
+                "links": links,
+                "metadata": metadata
             }
         */
         Gson gson = new Gson();
         JsonObject output_json = gson.toJsonTree(metadata).getAsJsonObject();
         output_json.add("content", gson.toJsonTree(body_handler.toString().trim()));
         output_json.add("urls", gson.toJsonTree(links));
-        output_json.add("language", gson.toJsonTree(language_handler.getLanguage()));
 
         return output_json.toString();
     }
