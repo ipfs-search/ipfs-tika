@@ -9,3 +9,8 @@ Java web application taking IPFS hashes, extracting (textual) content and metada
 
 ## Packaging
 `mvn package`
+
+## Settings
+Setting can be done through environment variables:
+
+* `IPFS_TIKA_LISTEN_PORT`: Port to listen on for connections (default 8081).

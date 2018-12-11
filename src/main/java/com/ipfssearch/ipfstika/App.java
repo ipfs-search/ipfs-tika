@@ -32,17 +32,35 @@ import org.xml.sax.SAXException;
 
 public class App extends NanoHTTPD {
 
-    public App() throws IOException {
-        super("localhost", 8081);
+    public App(String hostname, int port) throws IOException {
+        super(hostname, port);
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
-        System.out.println("\nipfs-tika accepting requests at: http://localhost:8081/ \n");
+        System.out.println(
+            String.format("\nipfs-tika accepting requests at: http://%s:%d/ \n", hostname, port)
+        );
     }
 
     public static void main(String[] args) {
+        String hostname = "localhost";
+        int port = 8081;
+
+        // Read settings from environment variable
         try {
-            new App();
-        } catch (IOException ioe) {
-            System.err.println("Couldn't start server:\n" + ioe);
+            String env_var = System.getenv("IPFS_TIKA_LISTEN_PORT");
+            if (env_var.length() > 1) {
+                port = Integer.parseInt(env_var);
+                System.out.println("IPFS_TIKA_LISTEN_PORT read from environment.");
+            }
+        } catch (NullPointerException e) {
+            // Env. variable not set, ignore
+        } catch (Exception e) {
+            System.err.println("Error reading setting:\n" + e);
+        }
+
+        try {
+            new App(hostname, port);
+        } catch (Exception e) {
+            System.err.println("Couldn't start server:\n" + e);
         }
     }
 
