@@ -59,7 +59,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
-      <version>1.17</version>
+      <version>1.19.1</version>
     </dependency>
     <!--  Gson: Java to Json conversion -->
     <dependency>
