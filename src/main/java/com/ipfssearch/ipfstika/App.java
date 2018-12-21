@@ -15,6 +15,8 @@ import fi.iki.elonen.NanoHTTPD;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.apache.http.client.utils.URIBuilder;
+
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
@@ -31,9 +33,16 @@ import com.google.gson.JsonObject;
 import org.xml.sax.SAXException;
 
 public class App extends NanoHTTPD {
+    private URI _ipfs_gateway;
 
-    public App(String hostname, int port) throws IOException {
+    public App(String hostname, int port, URI ipfs_gateway) throws IOException {
         super(hostname, port);
+
+        // Store gateway on instance
+        _ipfs_gateway = ipfs_gateway;
+
+        System.out.println("IPFS gateway: "+_ipfs_gateway);
+
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         System.out.println(
             String.format("\nipfs-tika accepting requests at: http://%s:%d/ \n", hostname, port)
@@ -68,17 +77,21 @@ public class App extends NanoHTTPD {
     public static void main(String[] args) {
         String hostname = "localhost";
         int listen_port;
+        URI ipfs_gateway;
 
         // Read settings from environment variable
         try {
             listen_port = Integer.parseInt(getEnv("IPFS_TIKA_LISTEN_PORT", "8081"));
+            ipfs_gateway = new URI(getEnv("IPFS_GATEWAY", "http://localhost:8080/"));
+
+            System.out.println("Listening port: "+listen_port);
         } catch (Exception e) {
             Fatal("Error reading settings:\n" + e);
             return;
         }
 
         try {
-            new App(hostname, listen_port);
+            new App(hostname, listen_port, ipfs_gateway);
         } catch (Exception e) {
             Fatal("Couldn't start server:\n" + e);
         }
@@ -125,19 +138,13 @@ public class App extends NanoHTTPD {
 
     private String getResponse(String path) throws IOException {
         // Generate properly escaped URL
+
         URI uri;
+        URIBuilder uri_builder = new URIBuilder(_ipfs_gateway).setPath(path);
+
 
         try {
-            uri = new URI(
-                "http",
-                null,
-                "localhost",
-                8080,
-                path,
-                null,
-                null
-            );
-
+            uri = uri_builder.build();
         } catch (URISyntaxException e) {
             System.err.println("URI syntax exception:\n" + e.getMessage());
             throw new IOException(e);
