@@ -40,27 +40,47 @@ public class App extends NanoHTTPD {
         );
     }
 
-    public static void main(String[] args) {
-        String hostname = "localhost";
-        int port = 8081;
+    private static String getEnv(String env_var, String def) {
+        // Return setting from environment variable
 
-        // Read settings from environment variable
         try {
-            String env_var = System.getenv("IPFS_TIKA_LISTEN_PORT");
-            if (env_var.length() > 1) {
-                port = Integer.parseInt(env_var);
-                System.out.println("IPFS_TIKA_LISTEN_PORT read from environment.");
+            String setting = System.getenv(env_var);
+            if (setting.length() > 1) {
+                System.out.println(env_var+" read from environment.");
+                return setting;
             }
         } catch (NullPointerException e) {
             // Env. variable not set, ignore
         } catch (Exception e) {
-            System.err.println("Error reading setting:\n" + e);
+            Fatal("Error reading setting "+env_var+":\n" + e);
+        }
+
+        // Return default
+        return def;
+    }
+
+    private static void Fatal(String msg) {
+        // Exit with fatal error
+        System.err.println("FATAL "+msg);
+        System.exit(-1);
+    }
+
+    public static void main(String[] args) {
+        String hostname = "localhost";
+        int listen_port;
+
+        // Read settings from environment variable
+        try {
+            listen_port = Integer.parseInt(getEnv("IPFS_TIKA_LISTEN_PORT", "8081"));
+        } catch (Exception e) {
+            Fatal("Error reading settings:\n" + e);
+            return;
         }
 
         try {
-            new App(hostname, port);
+            new App(hostname, listen_port);
         } catch (Exception e) {
-            System.err.println("Couldn't start server:\n" + e);
+            Fatal("Couldn't start server:\n" + e);
         }
     }
 
