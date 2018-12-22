@@ -1,7 +1,14 @@
 language: java
 
+script: |
+  # Fail early; compile
+  mvn compile
 
-script: mvn compile
+  # Smoke test; just see if we can keep running a few seconds
+  # TODO: Actually execute a CURL against it!
+  timeout 5 mvn exec:java -Dexec.mainClass="com.ipfssearch.ipfstika.App"; [ $? -ne 124 ] && RC=$?
+  exit $RC
+
 before_deploy: mvn package
 
 deploy:
