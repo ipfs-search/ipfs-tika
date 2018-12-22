@@ -34,6 +34,8 @@
           <archive>
             <manifest>
               <mainClass>${mainClass}</mainClass>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>
           </archive>
           <descriptorRefs>

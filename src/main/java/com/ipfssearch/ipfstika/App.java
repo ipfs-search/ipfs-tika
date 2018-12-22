@@ -1,5 +1,6 @@
 package com.ipfssearch.ipfstika;
 
+import java.io.InputStream;
 import java.io.IOException;
 
 import java.net.URL;
@@ -10,6 +11,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 
 import fi.iki.elonen.NanoHTTPD;
 
@@ -34,9 +36,49 @@ import org.xml.sax.SAXException;
 
 public class App extends NanoHTTPD {
     private URI _ipfs_gateway;
+    private String _version;
+
+    private String getVersion() {
+        // Ref: https://stackoverflow.com/questions/2712970/get-maven-artifact-version-at-runtime
+
+        String version = null;
+
+        // try to load from maven properties first
+        try {
+            Properties p = new Properties();
+            InputStream is = getClass().getResourceAsStream("/META-INF/maven/com.my.group/my-artefact/pom.properties");
+            if (is != null) {
+                p.load(is);
+                version = p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        // fallback to using Java API
+        if (version == null) {
+            Package aPackage = getClass().getPackage();
+            if (aPackage != null) {
+                version = aPackage.getImplementationVersion();
+                if (version == null) {
+                    version = aPackage.getSpecificationVersion();
+                }
+            }
+        }
+
+        if (version == null) {
+            // we could not compute the version so use "dev"
+            version = "dev-build";
+        }
+
+        return version;
+    }
 
     public App(String hostname, int port, URI ipfs_gateway) throws IOException {
         super(hostname, port);
+
+        // Get version
+        _version = getVersion();
 
         // Store gateway on instance
         _ipfs_gateway = ipfs_gateway;
@@ -45,7 +87,10 @@ public class App extends NanoHTTPD {
 
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         System.out.println(
-            String.format("\nipfs-tika accepting requests at: http://%s:%d/ \n", hostname, port)
+            String.format(
+                "\nipfs-tika %s accepting requests at: http://%s:%d/ \n",
+                _version, hostname, port
+            )
         );
     }
 
@@ -193,7 +238,8 @@ public class App extends NanoHTTPD {
                 "language": language_handler.getLanguage(),
                 "content": body_handler.toString(),
                 "links": links,
-                "metadata": metadata
+                "metadata": metadata,
+                "ipfs_tika_version": _version,
             }
         */
         Gson gson = new Gson();
@@ -201,6 +247,7 @@ public class App extends NanoHTTPD {
         output_json.add("content", gson.toJsonTree(body_handler.toString().trim()));
         output_json.add("language", gson.toJsonTree(language_handler.getLanguage()).getAsJsonObject());
         output_json.add("urls", gson.toJsonTree(links));
+        output_json.add("ipfs_tika_version", gson.toJsonTree(_version));
 
         return output_json.toString();
     }
