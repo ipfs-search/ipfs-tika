@@ -1,0 +1,14 @@
+language: java
+
+
+script: mvn compile
+before_deploy: mvn package
+
+deploy:
+  provider: releases
+  api_key:
+    secure: lpPdnW5V22MppFwFk9AVmeJSagAnTWFD9p7MNUhEgOonUQzFB7x1m3N3Em5W/hbxOrpZ2BIQDcpKfUo3WLevPWvWhPF4j9r28gZuZXtH5yysMn4nq5W1Yd0/2ReudAdxDPxSTq30Fsnl1YOAY2gBQu9RGR7i2wOrUYoCpoMFtwV0aHBF9tBhy2zKCiE0l2dNtYqS4vlRrb2mOp3XVte2pdJN7Kvf69G/+TIbKSYHsGgKgksjxRoZTrdzhZ78v6uvt7HLQpz3Zpty4QiVvYjVi2ljjeRRmFqpShIrPBKL6Sla0im9gpr3RkK5vqmVXV436RTRjodx4WBNTkTG9x7ZT80SrPt68T8x7S9UVkGsUr92JaAov3zl0kd+DFA/2sioYj93y317HpZ8xsFl8880uYWaA0SmGX6To7ZZQULIYobGLTzM5Ip+8SxXOuWRR3TctUzefBJ6e4Ewz+Zek9yaR069XfDBbtLcJVeavdkgCsHc+m36HXWNXzakiHon5t05QVgmNteAzgkA1R27Jvf8TSYwJdWROUGrr9flRxgF/lhH5B77B+8bY2fGY9psrUqZAv3GZYzByVeOVYd09iRvMP06c0CWvPgyWHkhP4DR8o0aJX4iTLHbDD/4m+fLyfram6w07noI1IEyAtQpuwa9eqKHoRjMj9eaNC7pMUFjcow=
+  file: target/*.jar
+  on:
+    repo: ipfs-search/ipfs-tika
+    branch: travis
