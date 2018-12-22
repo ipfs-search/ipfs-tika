@@ -11,4 +11,5 @@ deploy:
   file: target/*.jar
   on:
     repo: ipfs-search/ipfs-tika
-    branch: travis
+    branch: master
+    tag: true
