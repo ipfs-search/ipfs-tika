@@ -157,11 +157,15 @@ public class App extends NanoHTTPD {
         TikaInputStream inputStream = TikaInputStream.get(url);
 
         AutoDetectParser parser = new AutoDetectParser();
+
+        // Setup handler
         LinkContentHandler link_handler = new LinkContentHandler();
         BodyContentHandler body_handler = new BodyContentHandler(10*1024*1024);
-        // This causes weird crashes
-        // LanguageHandler language_handler = new LanguageHandler();
-        TeeContentHandler handler = new TeeContentHandler(link_handler, body_handler);
+        LanguageHandler language_handler = new LanguageHandler();
+        TeeContentHandler handler = new TeeContentHandler(
+            link_handler, body_handler, language_handler
+        );
+
         Metadata metadata = new Metadata();
 
         // Set filename from path string
@@ -195,6 +199,7 @@ public class App extends NanoHTTPD {
         Gson gson = new Gson();
         JsonObject output_json = gson.toJsonTree(metadata).getAsJsonObject();
         output_json.add("content", gson.toJsonTree(body_handler.toString().trim()));
+        output_json.add("language", gson.toJsonTree(language_handler.getLanguage()).getAsJsonObject());
         output_json.add("urls", gson.toJsonTree(links));
 
         return output_json.toString();
