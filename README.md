@@ -1,4 +1,6 @@
 # ipfs-tika
+[![Build Status](https://travis-ci.org/ipfs-search/ipfs-tika.svg?branch=travis)](https://travis-ci.org/ipfs-tika/ipfs-tika)
+
 Java web application taking IPFS hashes, extracting (textual) content and metadata through Apache's Tika.
 
 ## Compiling
