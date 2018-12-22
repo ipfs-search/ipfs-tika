@@ -1,0 +1,13 @@
+language: java
+
+jobs:
+  include:
+    - script: mvn compile
+    - stage: GitHub Release
+      script: mvn package
+      deploy:
+        provider: releases
+        api_key: "$GITHUB_OAUTH_TOKEN"
+        skip_cleanup: true
+        on:
+          tags: true
