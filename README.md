@@ -15,5 +15,6 @@ Java web application taking IPFS hashes, extracting (textual) content and metada
 ## Settings
 Setting can be done through environment variables:
 
+* `IPFS_TIKA_LISTEN_HOST`: Host to listen on for connections (default localhost).
 * `IPFS_TIKA_LISTEN_PORT`: Port to listen on for connections (default 8081).
 * `IPFS_GATEWAY`: URL of IPFS gateway (default: "http://localhost:8080/").

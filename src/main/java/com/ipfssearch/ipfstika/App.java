@@ -120,23 +120,22 @@ public class App extends NanoHTTPD {
     }
 
     public static void main(String[] args) {
-        String hostname = "localhost";
+        String listen_host;
         int listen_port;
         URI ipfs_gateway;
 
         // Read settings from environment variable
         try {
+            listen_host = getEnv("IPFS_TIKA_LISTEN_HOST", "localhost");
             listen_port = Integer.parseInt(getEnv("IPFS_TIKA_LISTEN_PORT", "8081"));
             ipfs_gateway = new URI(getEnv("IPFS_GATEWAY", "http://localhost:8080/"));
-
-            System.out.println("Listening port: "+listen_port);
         } catch (Exception e) {
             Fatal("Error reading settings:\n" + e);
             return;
         }
 
         try {
-            new App(hostname, listen_port, ipfs_gateway);
+            new App(listen_host, listen_port, ipfs_gateway);
         } catch (Exception e) {
             Fatal("Couldn't start server:\n" + e);
         }
