@@ -13,5 +13,7 @@ RUN mvn -Dassembly.appendAssemblyId=false package
 FROM openjdk:8-jdk-alpine
 COPY --from=build /target/*jar-with-dependencies.jar /
 
+ENV IPFS_TIKA_LISTEN_HOST=0.0.0.0
+
 EXPOSE 8081
 CMD ["sh", "-c", "java -jar *.jar"]

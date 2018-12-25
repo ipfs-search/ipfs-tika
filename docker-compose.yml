@@ -1,0 +1,16 @@
+version: '3'
+services:
+  ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - 4001:4001
+      - 5001:5001
+      - 8080:8080
+  ipfs-tika:
+    build: .
+    ports:
+      - 8081:8081
+    depends_on:
+      - ipfs
+    environment:
+      - IPFS_GATEWAY=http://ipfs:8080/
