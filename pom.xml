@@ -60,32 +60,32 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
-      <version>1.20</version>
+      <version>1.24</version>
     </dependency>
     <!-- language detection -->
     <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-langdetect</artifactId>
-        <version>1.20</version>
+        <version>1.24</version>
     </dependency>
     <!--  Gson: Java to Json conversion -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
       <artifactId>gson</artifactId>
-      <version>2.8.5</version>
+      <version>2.8.6</version>
       <scope>compile</scope>
     </dependency>
     <!-- slf4j-simple: logging for tika errors -->
     <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.8.0-beta2</version>
+        <version>2.0.0-alpha1</version>
         <scope>compile</scope>
     </dependency>
     <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.8.0-beta2</version>
+        <version>2.0.0-alpha1</version>
         <scope>compile</scope>
     </dependency>
     <!-- sqlite used by tika, somehow
@@ -94,7 +94,7 @@
     <dependency>
         <groupId>org.xerial</groupId>
         <artifactId>sqlite-jdbc</artifactId>
-        <version>3.25.2</version>
+        <version>3.30.1</version>
     </dependency>
     <!-- optional dependencies -->
     <dependency>
