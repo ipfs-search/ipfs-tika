@@ -3,6 +3,10 @@
 
 Java web application taking IPFS hashes, extracting (textual) content and metadata through Apache's Tika.
 
+## Requirements
+* Java 8
+* Maven
+
 ## Compiling
 `mvn compile`
 
