@@ -15,7 +15,7 @@ import java.util.Properties;
 
 import fi.iki.elonen.NanoHTTPD;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.http.client.utils.URIBuilder;
 

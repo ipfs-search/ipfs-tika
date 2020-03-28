@@ -3,7 +3,7 @@
   <groupId>com.ipfssearch.ipfstika</groupId>
   <artifactId>ipfs-tika</artifactId>
   <packaging>jar</packaging>
-  <version>0.4.0</version>
+  <version>0.4.1</version>
   <name>ipfs-tika</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -11,6 +11,15 @@
   </properties>
   <build>
     <plugins>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.1</version>
+          <configuration>
+              <source>1.6</source>
+              <target>1.6</target>
+          </configuration>
+      </plugin>
       <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
