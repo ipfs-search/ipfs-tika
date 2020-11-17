@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URI;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 
 import java.util.Map;
 import java.util.List;
@@ -198,7 +199,16 @@ public class App extends NanoHTTPD {
 
         // Turn URL into input stream
         URL url = uri.toURL();
-        TikaInputStream inputStream = TikaInputStream.get(url);
+
+        // This will eliminate the need for a timeout on the crawler side and will improve reliability with larger
+        // documents - as it actually won't timeout as long as data keeps coming.
+        // https://docs.oracle.com/javase/8/docs/api/java/net/HttpURLConnection.html
+        URLConnection connection = url.openConnection();
+        connection.setConnectTimeout(1000); // Should connect within 1s - this is real bad if it fails!
+        connection.setReadTimeout(30*1000); // No data for 30s - die!
+
+        InputStream inputStream = connection.getInputStream();
+        TikaInputStream tikaInputStream = TikaInputStream.get(inputStream);
 
         AutoDetectParser parser = new AutoDetectParser();
 
