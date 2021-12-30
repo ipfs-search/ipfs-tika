@@ -1,5 +1,7 @@
 # ipfs-tika
-[![Build Status](https://travis-ci.org/ipfs-search/ipfs-tika.svg?branch=travis)](https://travis-ci.org/ipfs-search/ipfs-tika) [![](https://img.shields.io/docker/automated/ipfssearch/ipfs-tika.svg)](https://cloud.docker.com/u/ipfssearch/repository/docker/ipfssearch/ipfs-tika)
+## Archived
+This repository is unmaintained and archived.
+Superseded by https://github.com/ipfs-search/ipfs-tika
 
 Java web application taking IPFS hashes, extracting (textual) content and metadata through Apache's Tika.
 
